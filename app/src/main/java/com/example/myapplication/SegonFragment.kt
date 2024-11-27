@@ -5,26 +5,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.myapplication.Data.Academic
 import com.example.myapplication.databinding.FragmentSegonBinding
+import com.google.gson.Gson
 
 class SegonFragment : Fragment() {
-    private var entitat: String? = null
-    private var anys: String? = null
+    private var academic: Academic? = null
+    private val gson = Gson()
 
     private lateinit var binding: FragmentSegonBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentSegonBinding.inflate(layoutInflater)
+        var academicJsonString: String? = null
 
         //A partir dels arguments rebuts, rebo els valor desats de dins i els guardo en les propietats
         arguments?.let {
-            entitat = it.getString(ARG_ENTITAT)
-            anys = it.getString(ARG_ANYS)
+             academicJsonString = it.getString(Academic.ARG_ACADEMIC)
         }
         //Assigno el valor de les propietats al text de cada view
-        binding.tvPrimerLayoutEntitat.text = entitat
-        binding.tvPrimerLayoutAnys.text = anys
+        if (!academicJsonString.isNullOrEmpty()) {
+            academic = gson.fromJson(academicJsonString, Academic::class.java)
+            if (academic != null) {
+                binding.tvPrimerLayoutAnys.text = academic!!.anys
+                binding.tvPrimerLayoutEntitat.text = academic!!.entitat
+            }
+        }
+
     }
 
     override fun onCreateView(
@@ -32,10 +40,5 @@ class SegonFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return binding.root
-    }
-
-    companion object {
-        const val ARG_ENTITAT = "Entitat"
-        const val ARG_ANYS = "Anys"
     }
 }
